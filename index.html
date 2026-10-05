@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Go Offline</title>
+  <meta name="description" content="Juega y practica Go sin conexión, sin cuentas y sin distracciones.">
+  <meta name="theme-color" content="#111318">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+  <link rel="stylesheet" href="./src/styles/tokens.css">
+  <link rel="stylesheet" href="./src/styles/main.css">
+  <link rel="stylesheet" href="./src/styles/board.css">
+</head>
+<body>
+  <a class="sr-only" href="#screen-home">Saltar al contenido</a>
+
+  <div class="app" id="app">
+
+    <!-- ============ INICIO ============ -->
+    <section class="screen is-active" id="screen-home" aria-label="Inicio">
+      <div class="home-hero">
+        <img class="home-logo" src="./assets/icons/icon.svg" alt="" width="96" height="96">
+        <h1 class="home-title">Go Offline</h1>
+        <p class="home-tagline">Juega y practica Go sin conexión, sin cuentas y sin distracciones.</p>
+      </div>
+      <nav class="home-menu" aria-label="Menú principal">
+        <button class="btn btn--primary btn--block" data-action="new-game">Nueva partida</button>
+        <button class="btn btn--block" data-action="continue">Continuar</button>
+        <button class="btn btn--block" data-action="my-games">Mis partidas</button>
+        <button class="btn btn--block" data-action="practice">Práctica</button>
+        <button class="btn btn--block" data-action="learn">Aprender</button>
+        <button class="btn btn--block" data-action="settings">Configuración</button>
+      </nav>
+      <footer class="home-footer">
+        <p class="home-footer__note">Todo se guarda en tu dispositivo.</p>
+        <button class="btn btn--ghost" data-action="privacy">Privacidad</button>
+
+        <section class="support" aria-labelledby="support-title">
+          <h2 class="support__title" id="support-title">Apoyar el proyecto</h2>
+          <p class="support__text">
+            ¿Te gustó el proyecto? Si querés colaborar de forma voluntaria, podés
+            invitarme a un cafecito o mate. Es totalmente opcional y me ayuda a
+            seguir trabajando en la aplicación.
+          </p>
+          <ul class="support__links">
+            <li>
+              <a class="support__link support__link--kofi"
+                 href="https://ko-fi.com/martinmartinezgarcia"
+                 target="_blank" rel="noopener noreferrer">
+                <span class="support__icon" aria-hidden="true">☕</span>
+                <span>Ko-fi</span>
+              </a>
+            </li>
+            <li>
+              <a class="support__link support__link--paypal"
+                 href="https://www.paypal.com/paypalme/blufferedtwitch"
+                 target="_blank" rel="noopener noreferrer">
+                <span class="support__icon" aria-hidden="true">💙</span>
+                <span>PayPal</span>
+              </a>
+            </li>
+            <li>
+              <a class="support__link support__link--starlink"
+                 href="https://starlink.com/es?referral=RC-DF-5848974-78640-68&amp;app_source=share"
+                 target="_blank" rel="noopener noreferrer">
+                <span class="support__icon" aria-hidden="true">🛰️</span>
+                <span>Internet satelital Starlink</span>
+              </a>
+            </li>
+          </ul>
+          <p class="support__sign">Martín Martínez — Cuenta Prex: 35502</p>
+        </section>
+      </footer>
+    </section>
+
+    <!-- ============ NUEVA PARTIDA ============ -->
+    <section class="screen" id="screen-new" aria-label="Nueva partida">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon" data-action="back-home" aria-label="Volver">←</button>
+        <h2 class="topbar__title">Nueva partida</h2>
+      </header>
+      <div class="screen__scroll">
+        <div class="screen__inner">
+          <form id="new-game-form" class="settings-list">
+            <p class="settings-group__title">Tablero</p>
+            <div class="form-row">
+              <span class="form-label" id="lbl-size">Tamaño</span>
+              <div class="form-control segmented" role="group" aria-labelledby="lbl-size">
+                <button type="button" class="segmented__btn" data-size="9">9×9</button>
+                <button type="button" class="segmented__btn" data-size="13">13×13</button>
+                <button type="button" class="segmented__btn is-active" data-size="19">19×19</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-komi">
+                Komi
+                <span class="form-hint">Puntos de compensación para blancas</span>
+              </label>
+              <div class="form-control">
+                <select class="select" id="f-komi">
+                  <option value="0">0</option>
+                  <option value="5.5">5.5</option>
+                  <option value="6.5">6.5</option>
+                  <option value="7.5" selected>7.5</option>
+                  <option value="8.5">8.5</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-handicap">
+                Handicap
+                <span class="form-hint">Piedras de ventaja para negras</span>
+              </label>
+              <div class="form-control">
+                <select class="select" id="f-handicap">
+                  <option value="0" selected>Sin handicap</option>
+                  <option value="2">2 piedras</option>
+                  <option value="3">3 piedras</option>
+                  <option value="4">4 piedras</option>
+                  <option value="5">5 piedras</option>
+                  <option value="6">6 piedras</option>
+                  <option value="7">7 piedras</option>
+                  <option value="8">8 piedras</option>
+                  <option value="9">9 piedras</option>
+                </select>
+              </div>
+            </div>
+
+            <p class="settings-group__title">Jugadores</p>
+            <div class="form-row">
+              <label class="form-label" for="f-black">Negras</label>
+              <div class="form-control">
+                <input class="input" id="f-black" type="text" maxlength="24" value="Negras" autocomplete="off">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="f-white">Blancas</label>
+              <div class="form-control">
+                <input class="input" id="f-white" type="text" maxlength="24" value="Blancas" autocomplete="off">
+              </div>
+            </div>
+          </form>
+          <button class="btn btn--primary btn--block" data-action="start-game">Empezar partida</button>
+          <p class="form-hint" id="new-game-hint" role="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PARTIDA ============ -->
+    <section class="screen" id="screen-game" aria-label="Partida">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon" data-action="back-home" aria-label="Volver al inicio">←</button>
+        <h2 class="topbar__title" id="game-title">Partida</h2>
+        <div class="topbar__actions">
+          <span class="badge badge--live" id="game-phase">En curso</span>
+        </div>
+      </header>
+
+      <div class="game-layout">
+        <div class="board-wrap" id="board-wrap"></div>
+
+        <aside class="game-panel" aria-label="Información y controles">
+          <div class="panel panel--status">
+            <h3 class="panel__title">Estado</h3>
+            <div class="status">
+              <div class="status__turn" id="status-turn">
+                <span class="turn-badge turn-badge--black" id="turn-badge" aria-hidden="true"></span>
+                <span id="turn-text">Turno de negras</span>
+              </div>
+              <div class="status__captures">
+                <div class="capture-row">
+                  <span class="capture-row__label">Capturas de negras</span>
+                  <span class="capture-row__value" id="cap-black">0</span>
+                </div>
+                <div class="capture-row">
+                  <span class="capture-row__label">Capturas de blancas</span>
+                  <span class="capture-row__value" id="cap-white">0</span>
+                </div>
+              </div>
+              <div class="status__meta">
+                <span class="chip" id="chip-size">19×19</span>
+                <span class="chip" id="chip-komi">Komi 7.5</span>
+                <span class="chip" id="chip-moves">0 jugadas</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel--controls">
+            <h3 class="panel__title">Controles</h3>
+            <div class="controls">
+              <div class="controls__row">
+                <button class="btn" id="btn-undo" data-action="undo">Deshacer</button>
+                <button class="btn" id="btn-redo" data-action="redo">Rehacer</button>
+              </div>
+              <div class="controls__row">
+                <button class="btn" id="btn-pass" data-action="pass">Pasar</button>
+                <button class="btn btn--danger" id="btn-resign" data-action="resign">Rendirse</button>
+              </div>
+              <div class="controls__row">
+                <button class="btn" data-action="save-game">Guardar</button>
+                <button class="btn" data-action="export-sgf">Exportar</button>
+                <button class="btn btn--danger" data-action="restart">Reiniciar</button>
+              </div>
+              <div class="controls__row" id="scoring-controls" hidden>
+                <button class="btn btn--primary" data-action="confirm-score">Confirmar puntuación</button>
+                <button class="btn" data-action="cancel-scoring">Volver a jugar</button>
+              </div>
+            </div>
+            <p class="form-hint" id="game-hint" role="status"></p>
+          </div>
+
+          <div class="panel panel--history">
+            <h3 class="panel__title">Historial</h3>
+            <div class="history">
+              <ol class="history__list" id="history-list"></ol>
+              <p class="history-empty" id="history-empty">Sin jugadas todavía.</p>
+              <div class="history-nav" id="history-nav" hidden>
+                <button class="btn btn--nav" data-nav="first" aria-label="Primera jugada">|◀</button>
+                <button class="btn btn--nav" data-nav="prev" aria-label="Jugada anterior">◀</button>
+                <button class="btn btn--nav" data-nav="next" aria-label="Jugada siguiente">▶</button>
+                <button class="btn btn--nav" data-nav="last" aria-label="Última jugada">▶|</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel--meta">
+            <details>
+              <summary class="panel__title panel__title--togglable">Marcado de piedras muertas</summary>
+              <p class="form-hint">
+                Tras dos pases, toca las piedras muertas para marcarlas.
+                El marcador se usa solo para el recuento.
+              </p>
+            </details>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ MIS PARTIDAS ============ -->
+    <section class="screen" id="screen-games" aria-label="Mis partidas">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon" data-action="back-home" aria-label="Volver">←</button>
+        <h2 class="topbar__title">Mis partidas</h2>
+      </header>
+      <div class="screen__scroll">
+        <div class="screen__inner" id="games-list"></div>
+      </div>
+    </section>
+
+    <!-- ============ APRENDER ============ -->
+    <section class="screen" id="screen-learn" aria-label="Aprender">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon" data-action="back-home" aria-label="Volver">←</button>
+        <h2 class="topbar__title">Aprender</h2>
+      </header>
+      <div class="screen__scroll">
+        <div class="screen__inner" id="learn-content">
+          <h2 class="screen__heading">Lo esencial del Go</h2>
+          <p class="screen__sub">Un resumen breve para empezar a jugar hoy mismo.</p>
+
+          <article class="learn-card">
+            <h3>¿Qué es el Go?</h3>
+            <div class="learn-content">
+              <p>El Go (Baduk, Weiqi) es un juego de tablero para dos jugadores: negras y blancas colocan piedras por turnos sobre las intersecciones de una cuadrícula. El objetivo es controlar más territorio que el rival.</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Objetivo</h3>
+            <div class="learn-content">
+              <p>Al final de la partida, gana quien tenga más <strong>territorio</strong>: intersecciones vacías rodeadas exclusivamente por sus propias piedras, más sus piedras en el tablero (reglas chinas).</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Libertades</h3>
+            <div class="learn-content">
+              <p>Cada piedra tiene <strong>libertades</strong>: las intersecciones vacías adyacentes (arriba, abajo, izquierda, derecha). Las piedras del mismo color unidas forman un <strong>grupo</strong> y comparten sus libertades.</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Capturas</h3>
+            <div class="learn-content">
+              <p>Cuando un grupo pierde su última libertad, se retira del tablero. Las piedras capturadas se cuentan como puntos para quien las capturó.</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Atari</h3>
+            <div class="learn-content">
+              <p>Un grupo con una sola libertad está en <strong>atari</strong>: a punto de ser capturado. Puedes salvarlo escapando o capturando primero.</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Ko</h3>
+            <div class="learn-content">
+              <p>La regla del <strong>ko</strong> impide repetir inmediatamente la posición anterior. Si capturas una piedra de ko, tu rival no puede recapturar de inmediato: debe jugar en otro sitio primero.</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Territorio</h3>
+            <div class="learn-content">
+              <p>Una intersección vacía es tu territorio si todas las piedras que la rodean son tuyas. Si la tocan ambos colores, es <strong>neutral</strong> (por ejemplo en un seki).</p>
+            </div>
+          </article>
+
+          <article class="learn-card">
+            <h3>Final de partida</h3>
+            <div class="learn-content">
+              <p>Cuando los dos jugadores pasan seguidos, la partida entra en fase de puntuación. Marca las piedras muertas y confirma. En esta versión se usa el recuento chino de área.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONFIGURACIÓN ============ -->
+    <section class="screen" id="screen-settings" aria-label="Configuración">
+      <header class="topbar">
+        <button class="btn btn--ghost btn--icon" data-action="back-home" aria-label="Volver">←</button>
+        <h2 class="topbar__title">Configuración</h2>
+      </header>
+      <div class="screen__scroll">
+        <div class="screen__inner">
+          <div class="panel">
+            <h3 class="settings-group__title">Apariencia</h3>
+            <div class="form-row">
+              <span class="form-label" id="lbl-theme">Tema</span>
+              <div class="form-control segmented" role="group" aria-labelledby="lbl-theme">
+                <button type="button" class="segmented__btn is-active" data-theme-opt="dark">Oscuro</button>
+                <button type="button" class="segmented__btn" data-theme-opt="warm">Cálido</button>
+                <button type="button" class="segmented__btn" data-theme-opt="auto">Automático</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Coordenadas<span class="form-hint">Mostrar A–T y números</span></span>
+              <label class="switch form-control">
+                <input type="checkbox" id="s-coords" checked>
+                <span class="switch__track"></span><span class="switch__thumb"></span>
+              </label>
+            </div>
+
+            <h3 class="settings-group__title">Partida</h3>
+            <div class="form-row">
+              <label class="form-label" for="s-size">Tamaño por defecto</label>
+              <div class="form-control">
+                <select class="select" id="s-size">
+                  <option value="9">9×9</option>
+                  <option value="13">13×13</option>
+                  <option value="19" selected>19×19</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="s-komi">Komi por defecto</label>
+              <div class="form-control">
+                <select class="select" id="s-komi">
+                  <option value="5.5">5.5</option>
+                  <option value="6.5">6.5</option>
+                  <option value="7.5" selected>7.5</option>
+                  <option value="8.5">8.5</option>
+                </select>
+              </div>
+            </div>
+
+            <h3 class="settings-group__title">Sonido y vibración</h3>
+            <div class="form-row">
+              <span class="form-label">Sonido<span class="form-hint">Golpe suave al colocar piedra</span></span>
+              <label class="switch form-control">
+                <input type="checkbox" id="s-sound" checked>
+                <span class="switch__track"></span><span class="switch__thumb"></span>
+              </label>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Vibración<span class="form-hint">Solo en dispositivos compatibles</span></span>
+              <label class="switch form-control">
+                <input type="checkbox" id="s-vibrate" checked>
+                <span class="switch__track"></span><span class="switch__thumb"></span>
+              </label>
+            </div>
+
+            <h3 class="settings-group__title">Confirmaciones</h3>
+            <div class="form-row">
+              <span class="form-label">Confirmar antes de rendirse</span>
+              <label class="switch form-control">
+                <input type="checkbox" id="s-confirm-resign" checked>
+                <span class="switch__track"></span><span class="switch__thumb"></span>
+              </label>
+            </div>
+            <div class="form-row">
+              <span class="form-label">Confirmar antes de reiniciar</span>
+              <label class="switch form-control">
+                <input type="checkbox" id="s-confirm-restart" checked>
+                <span class="switch__track"></span><span class="switch__thumb"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 class="settings-group__title">Estadísticas locales</h3>
+            <div class="stat-grid" id="stats-grid">
+              <div class="stat"><span class="stat__value" id="st-played">0</span><span class="stat__label">Jugadas</span></div>
+              <div class="stat"><span class="stat__value" id="st-finished">0</span><span class="stat__label">Terminadas</span></div>
+              <div class="stat"><span class="stat__value" id="st-9">0</span><span class="stat__label">9×9</span></div>
+              <div class="stat"><span class="stat__value" id="st-13">0</span><span class="stat__label">13×13</span></div>
+              <div class="stat"><span class="stat__value" id="st-19">0</span><span class="stat__label">19×19</span></div>
+            </div>
+          </div>
+
+          <div class="privacy-note">
+            <strong>Privacidad.</strong> Go Offline procesa y almacena toda la información localmente en tu
+            dispositivo. No se transmiten partidas ni estadísticas a servidores externos.
+          </div>
+
+          <button class="btn btn--danger btn--block" data-action="wipe-data">Borrar todos los datos locales</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

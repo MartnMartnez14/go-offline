@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Go Offline — Tokens de diseño
+   Estética: oscura, zen, minimalista, moderna. Pensada para partidas largas.
+   ========================================================================== */
+
+:root {
+  /* --- Superficies --- */
+  --bg-primary: #111318;
+  --bg-secondary: #161920;
+  --bg-panel: #191c23;
+  --bg-elevated: #20242e;
+  --border: #2a2f3a;
+  --border-strong: #39414f;
+
+  /* --- Texto --- */
+  --text-primary: #e8e8e8;
+  --text-secondary: #a8adb7;
+  --text-muted: #6f7683;
+
+  /* --- Acentos --- */
+  --accent: #4ade80;
+  --accent-soft: rgba(74, 222, 128, 0.14);
+  --accent-warm: #7c9ad4;
+  --accent-violet: #8b7fd4;
+  --danger: #e5645c;
+  --danger-soft: rgba(229, 100, 92, 0.16);
+  --warning: #d9a441;
+
+  /* --- Tablero (madera oscura) --- */
+  --board-bg: #a97c50;
+  --board-bg-hi: #bd8f5f;
+  --board-bg-lo: #8a6440;
+  --board-line: #5b432c;
+  --board-star: #5b432c;
+  --board-edge: #6b4f34;
+
+  /* --- Piedras --- */
+  --stone-black: #1b1d22;
+  --stone-black-hi: #4a505c;
+  --stone-white: #f2efe8;
+  --stone-white-hi: #ffffff;
+  --stone-shadow: rgba(0, 0, 0, 0.45);
+  --last-move: #e5645c;
+
+  /* --- Radios --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* --- Espaciado --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* --- Tipografía --- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* --- Sombras --- */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.34);
+  --shadow-3: 0 16px 48px rgba(0, 0, 0, 0.46);
+
+  /* --- Transiciones --- */
+  --transition-fast: 120ms ease-out;
+  --transition-base: 200ms ease-out;
+
+  /* --- Layout --- */
+  --topbar-h: 56px;
+  --panel-w: 320px;
+  --hit-size: 44px;
+}
+
+/* Tema oscuro cálido: superficies más ámbar, acento más terroso */
+[data-theme="warm"] {
+  --bg-primary: #16120e;
+  --bg-secondary: #1c1712;
+  --bg-panel: #221b15;
+  --bg-elevated: #2b221a;
+  --border: #3a2f25;
+  --border-strong: #4d3e30;
+
+  --text-primary: #f0e8de;
+  --text-secondary: #b5a692;
+  --text-muted: #7d7060;
+
+  --accent: #d4a15c;
+  --accent-soft: rgba(212, 161, 92, 0.16);
+  --accent-warm: #c98f4e;
+  --accent-violet: #a888c8;
+
+  --board-bg: #b5865a;
+  --board-bg-hi: #c99967;
+  --board-bg-lo: #94693f;
+  --board-line: #5f4529;
+  --board-star: #5f4529;
+}
+
+/* Automático: si el sistema pide claro, suavizamos acentos y elevación */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --accent: #2f9e5c;
+    --accent-soft: rgba(47, 158, 92, 0.14);
+    --shadow-1: 0 1px 2px rgba(17, 19, 24, 0.12);
+    --shadow-2: 0 4px 16px rgba(17, 19, 24, 0.14);
+    --shadow-3: 0 16px 48px rgba(17, 19, 24, 0.18);
+  }
+}
+
+/* Respeto a preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 1ms linear;
+    --transition-base: 1ms linear;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

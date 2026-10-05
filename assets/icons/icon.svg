@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Go Offline: dos piedras superpuestas, estética zen. Sin texto. -->
+  <defs>
+    <radialGradient id="blackStone" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#2a2e37"/>
+      <stop offset="55%" stop-color="#12141a"/>
+      <stop offset="100%" stop-color="#05060a"/>
+    </radialGradient>
+    <radialGradient id="whiteStone" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#f2efe8"/>
+      <stop offset="100%" stop-color="#d8d2c4"/>
+    </radialGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="70%" stop-color="#000000" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="262" cy="286" rx="185" ry="150" fill="url(#shadow)"/>
+  <circle cx="198" cy="256" r="118" fill="url(#blackStone)"/>
+  <circle cx="314" cy="256" r="118" fill="url(#whiteStone)"/>
+</svg>
