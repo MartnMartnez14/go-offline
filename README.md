@@ -8,6 +8,8 @@ no hay servidores, no hay registro, no hay anuncios, no hay telemetría.
 
 Abre. Juega. Cierra. Vuelve otro día y continúa exactamente donde lo dejaste.
 
+**Demo en vivo:** [martnmartnez14.github.io/go-offline](https://martnmartnez14.github.io/go-offline/)
+
 ---
 
 ## Características
@@ -36,7 +38,10 @@ Abre. Juega. Cierra. Vuelve otro día y continúa exactamente donde lo dejaste.
 
 ## Demo y uso
 
-No hace falta instalar nada para probarla: es una web estática.
+**Ya publicada en GitHub Pages:**
+[https://martnmartnez14.github.io/go-offline/](https://martnmartnez14.github.io/go-offline/)
+
+Para probarla en local no hace falta instalar nada: es una web estática.
 
 ```bash
 # desde la raíz del proyecto
@@ -163,6 +168,20 @@ Go Offline procesa y almacena toda la información localmente en tu dispositivo.
 No se transmiten partidas ni estadísticas a servidores externos. No hay cuentas,
 no hay identificadores, no hay analítica y no se piden permisos de cámara,
 micrófono, ubicación ni contactos.
+
+---
+
+## Apoyar el proyecto
+
+¿Te gustó el proyecto? Si querés colaborar de forma voluntaria, podés invitarme
+a un cafecito o mate. Es totalmente opcional y me ayuda a seguir trabajando en
+la aplicación.
+
+- ☕ [Ko-fi](https://ko-fi.com/martinmartinezgarcia)
+- 💙 [PayPal](https://www.paypal.com/paypalme/blufferedtwitch)
+- 🛰️ [Internet satelital Starlink](https://starlink.com/es?referral=RC-DF-5848974-78640-68&app_source=share)
+
+**Martín Martínez** — Cuenta Prex: 35502
 
 ---
 
