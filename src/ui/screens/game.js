@@ -3,8 +3,9 @@
  */
 
 import {
-  BLACK, WHITE, EMPTY, idx, toXY, cloneBoard,
+  BLACK, WHITE, EMPTY, idx, toXY, cloneBoard, opponent,
 } from '../../core/board.js';
+import { randomMove } from '../../core/ai.js';
 import {
   createGame, playMove, pass, resign, undo, redo, canUndo, canRedo,
   markDeadToggle, clearDead, cancelScoring, computeScore, confirmScore,
@@ -41,6 +42,8 @@ export function mountGameScreen(root, { onExit, getSettings }) {
   let practiceColor = BLACK;
   let practiceBoard = null; // Uint8Array en modo práctica
   let autosaveTimer = null;
+  let aiTimer = null;
+  const AI_DELAY_MS = 400;
 
   const ui = {
     title: $('#game-title', root),
@@ -64,6 +67,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
     onSelect: (target) => {
       if (practiceMode || !game) return;
       const n = game.history.length;
+      clearAI();
       if (n === 0) return;
 
       // cursor === -1 significa "posición actual" (tras la última jugada).
@@ -83,6 +87,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
         cursor = Number.isInteger(i) && i >= 0 && i < n ? i : -1;
       }
       render();
+      syncAI();
     },
   });
 
@@ -181,7 +186,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
 
     ui.undo.disabled = !canUndo(game) || game.phase !== 'playing' || cursor >= 0;
     ui.redo.disabled = !canRedo(game) || game.phase !== 'playing' || cursor >= 0;
-    ui.pass.disabled = game.phase !== 'playing';
+    ui.pass.disabled = game.phase !== 'playing' || isAITurn();
     ui.resign.disabled = game.phase === 'finished';
     ui.scoring.hidden = game.phase !== 'scoring';
 
@@ -232,6 +237,60 @@ export function mountGameScreen(root, { onExit, getSettings }) {
     }, 350);
   }
 
+  // ---------- Computadora (nivel 1) ----------
+  function isAITurn() {
+    return !!game && !practiceMode && game.meta.aiColor === game.turn;
+  }
+
+  /** Color que controla la persona: el opuesto a la IA, o el del turno sin IA. */
+  function humanColor() {
+    return game.meta.aiColor ? opponent(game.meta.aiColor) : game.turn;
+  }
+
+  function clearAI() {
+    clearTimeout(aiTimer);
+    aiTimer = null;
+  }
+
+  /**
+   * Programa la jugada de la IA si le toca. Reemplaza cualquier pendiente:
+   * el timeout se valida de nuevo al dispararse, por si cambió la partida.
+   */
+  function syncAI() {
+    clearAI();
+    if (!isAITurn() || game.phase !== 'playing' || cursor >= 0) return;
+    const id = game.id;
+    aiTimer = setTimeout(() => {
+      aiTimer = null;
+      if (!game || game.id !== id || !isAITurn() || game.phase !== 'playing' || cursor >= 0) return;
+      const mv = randomMove(game);
+      if (mv) commitPlay(mv.x, mv.y);
+      else doPass();
+      syncAI();
+    }, AI_DELAY_MS);
+  }
+
+  /** Jugada legal ya validada por el motor: sonido, render y autosave. */
+  function commitPlay(x, y) {
+    const res = playMove(game, x, y);
+    if (res.ok) {
+      feedback(res.captured);
+      render();
+      scheduleAutosave();
+    }
+    return res;
+  }
+
+  function doPass() {
+    pass(game);
+    if (game.phase === 'scoring') {
+      toast('Dos pases seguidos: marca las piedras muertas.');
+    }
+    feedback();
+    render();
+    scheduleAutosave();
+  }
+
   function onPointClick(x, y) {
     if (!game && !practiceMode) return;
 
@@ -251,9 +310,10 @@ export function mountGameScreen(root, { onExit, getSettings }) {
       scheduleAutosave();
       return;
     }
+    if (isAITurn()) { render(); syncAI(); return; }
     if (game.phase !== 'playing') return;
 
-    const res = playMove(game, x, y);
+    const res = commitPlay(x, y);
     if (!res.ok) {
       const messages = {
         occupied: 'Esa intersección ya está ocupada.',
@@ -264,13 +324,14 @@ export function mountGameScreen(root, { onExit, getSettings }) {
       ui.hint.textContent = messages[res.reason] ?? 'Jugada no permitida.';
       return;
     }
-    feedback(res.captured);
-    render();
-    scheduleAutosave();
+    syncAI();
   }
 
   function onPointHover(x, y) {
-    hover = x == null ? null : { x, y };
+    const next = x == null ? null : { x, y };
+    const same = (hover === next) || (hover && next && hover.x === next.x && hover.y === next.y);
+    if (same) return;
+    hover = next;
     if (view && !practiceMode && game?.phase === 'playing') render();
     else if (view && practiceMode) render();
   }
@@ -283,6 +344,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
 
     if (action === 'back-home') {
       clearTimeout(autosaveTimer);
+      clearAI();
       if (game && !practiceMode) {
         try { await store.saveGame(serialize(game)); } catch { /* ignorado */ }
       }
@@ -323,37 +385,33 @@ export function mountGameScreen(root, { onExit, getSettings }) {
     switch (action) {
       case 'undo': {
         if (cursor >= 0) { cursor = -1; render(); break; }
-        if (undo(game)) { feedback(); render(); scheduleAutosave(); }
+        if (undo(game)) {
+          // Contra la IA se deshace también la jugada humana previa a la de la IA.
+          if (isAITurn() && canUndo(game)) undo(game);
+          feedback(); render(); scheduleAutosave();
+        }
         break;
       }
       case 'redo':
         if (redo(game)) { render(); scheduleAutosave(); }
         break;
 
-      case 'pass': {
-        const settings = getSettings?.() ?? {};
-        pass(game);
-        if (game.phase === 'scoring') {
-          toast('Dos pases seguidos: marca las piedras muertas.');
-        }
-        feedback();
-        render();
-        scheduleAutosave();
+      case 'pass':
+        doPass();
         break;
-      }
 
       case 'resign': {
         const settings = getSettings?.() ?? {};
         if (settings.confirmResign !== false) {
           const ok = await confirmDialog({
             title: '¿Rendirse?',
-            body: `Se dará la partida por perdida para ${game.turn === BLACK ? 'negras' : 'blancas'}.`,
+            body: `Se dará la partida por perdida para ${humanColor() === BLACK ? 'negras' : 'blancas'}.`,
             confirmLabel: 'Me rindo',
             danger: true,
           });
           if (!ok) return;
         }
-        resign(game, game.turn);
+        resign(game, humanColor());
         render();
         scheduleAutosave();
         bumpStats('finish-resign');
@@ -383,7 +441,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
           });
           if (!ok) return;
         }
-        start(lastOptions ?? { size: game.size, komi: game.komi });
+        start(lastOptions ?? { size: game.size, komi: game.komi, aiColor: game.meta.aiColor });
         toast('Nueva partida.');
         break;
       }
@@ -412,6 +470,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
       default:
         break;
     }
+    syncAI();
   });
 
   /**
@@ -516,6 +575,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
 
   /** Crea una partida nueva. Se expone abajo en el objeto devuelto. */
   function start(options) {
+    clearAI();
     practiceMode = false;
     cursor = -1;
     lastOptions = { ...options };
@@ -524,6 +584,7 @@ export function mountGameScreen(root, { onExit, getSettings }) {
     render();
     scheduleAutosave();
     bumpStats('start');
+    syncAI();
   }
 
   return {
@@ -532,15 +593,18 @@ export function mountGameScreen(root, { onExit, getSettings }) {
 
     /** Reanuda una partida existente (objeto serializado). */
     resume(serialized) {
+      clearAI();
       practiceMode = false;
       cursor = -1;
       game = deserialize(serialized);
       mountBoard(game.size);
       render();
+      syncAI();
     },
 
     /** Modo práctica libre. */
     practice(size = 19) {
+      clearAI();
       practiceMode = true;
       practiceSize = size;
       practiceColor = BLACK;

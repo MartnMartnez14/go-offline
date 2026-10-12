@@ -37,7 +37,7 @@ const screens = {
 let settings = null;
 let gameScreen = null;
 let currentScreen = 'home';
-let pendingNewGame = { size: 19, komi: 7.5, handicap: 0, blackName: 'Negras', whiteName: 'Blancas' };
+let pendingNewGame = { size: 19, komi: 7.5, handicap: 0, blackName: 'Negras', whiteName: 'Blancas', vsAI: false };
 
 // ---------------------------------------------------------------------
 // Enrutado
@@ -103,6 +103,8 @@ function syncNewGameForm() {
   $('#f-handicap').value = String(pendingNewGame.handicap);
   $('#f-black').value = pendingNewGame.blackName;
   $('#f-white').value = pendingNewGame.whiteName;
+  $('#f-vs-ai').checked = pendingNewGame.vsAI;
+  $('#f-white').disabled = pendingNewGame.vsAI;
 }
 
 function readNewGameForm() {
@@ -112,6 +114,7 @@ function readNewGameForm() {
     handicap: Number($('#f-handicap').value),
     blackName: $('#f-black').value.trim() || 'Negras',
     whiteName: $('#f-white').value.trim() || 'Blancas',
+    vsAI: $('#f-vs-ai').checked,
   };
   return pendingNewGame;
 }
@@ -271,13 +274,15 @@ function bindGlobal() {
           handicap: 0,
           blackName: 'Negras',
           whiteName: 'Blancas',
+          vsAI: false,
         };
         show('new');
         break;
 
       case 'start-game': {
-        const opts = readNewGameForm();
-        gameScreen.start(opts);
+        const { vsAI, ...opts } = readNewGameForm();
+        if (vsAI) opts.whiteName = 'Computadora (nivel 1)';
+        gameScreen.start({ ...opts, aiColor: vsAI ? WHITE : null });
         show('game');
         break;
       }
@@ -350,6 +355,9 @@ function bindGlobal() {
   });
 
   // Formulario de nueva partida
+  $('#f-vs-ai')?.addEventListener('change', (ev) => {
+    $('#f-white').disabled = ev.target.checked;
+  });
   $('#new-game-form')?.addEventListener('click', (ev) => {
     const b = ev.target.closest('.segmented__btn[data-size]');
     if (!b) return;

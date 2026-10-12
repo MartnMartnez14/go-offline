@@ -4,7 +4,7 @@
  */
 
 const CACHE_PREFIX = 'go-offline-';
-const CACHE_VERSION = 'go-offline-v1';
+const CACHE_VERSION = 'go-offline-v2';
 
 const APP_SHELL = [
   './',
@@ -17,6 +17,7 @@ const APP_SHELL = [
   './src/core/game.js',
   './src/core/scoring.js',
   './src/core/coords.js',
+  './src/core/ai.js',
   './src/ui/boardView.js',
   './src/ui/historyPanel.js',
   './src/ui/dialogs.js',

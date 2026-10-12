@@ -128,6 +128,7 @@ export function createGame(options = {}) {
       createdAt: options.createdAt ?? now,
       updatedAt: now,
       note: options.note ?? '',
+      aiColor: options.aiColor === BLACK || options.aiColor === WHITE ? options.aiColor : null,
     },
   };
 }
@@ -386,6 +387,7 @@ export function deserialize(data) {
     whiteName: typeof data.meta?.whiteName === 'string' ? data.meta.whiteName : 'Blancas',
     createdAt: toFinite(data.meta?.createdAt, Date.now()),
     note: typeof data.meta?.note === 'string' ? data.meta.note : '',
+    aiColor: data.meta?.aiColor,
   });
 
   const moves = Array.isArray(data.moves) ? data.moves : [];
