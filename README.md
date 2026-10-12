@@ -17,6 +17,8 @@ Abre. Juega. Cierra. Vuelve otro día y continúa exactamente donde lo dejaste.
 - **Tableros de 9×9, 13×13 y 19×19**, con proporciones correctas y adaptación a
   pantalla.
 - **Jugador contra jugador local**: dos personas, un dispositivo.
+- **Contra la computadora (nivel 1)**: la IA juega blancas con jugadas legales
+  al azar, ideal para practicar.
 - **Reglas completas**: libertades, grupos, capturas, suicidio, ko simple, pasar
   y rendirse.
 - **Puntuación china de área**, con komi configurable y marcado de piedras
@@ -53,7 +55,8 @@ Con Node instalado también sirve cualquier servidor estático equivalente.
 
 ### Cómo se juega
 
-1. **Nueva partida** → elige tamaño, komi y handicap → **Empezar partida**.
+1. **Nueva partida** → elige tamaño, komi y handicap (y si quieres, activa
+   **Contra la computadora**) → **Empezar partida**.
 2. Toca una intersección para colocar una piedra. El turno alterna entre negras
    y blancas.
 3. **Pasar** cede el turno. Dos pases seguidos abren la fase de puntuación.
@@ -134,8 +137,9 @@ nitidez nativa, estilado por CSS, animaciones ligeras y accesibilidad real.
 │   │   ├── groups.js       Grupos y libertades (flood-fill)
 │   │   ├── rules.js        Capturas, suicidio y ko
 │   │   ├── game.js         Partida, undo/redo, handicap, serialización
-│   │   ├── scoring.js      Puntuación china de área
-│   │   └── coords.js       Etiquetas A–T sin I
+ │   │   ├── scoring.js      Puntuación china de área
+ │   │   ├── coords.js       Etiquetas A–T sin I
+ │   │   └── ai.js           IA nivel 1 (jugadas legales al azar)
 │   ├── ui/
 │   │   ├── boardView.js    Render SVG del tablero
 │   │   ├── historyPanel.js Historial y visor
@@ -157,8 +161,8 @@ La lógica del juego se prueba de forma independiente de la interfaz.
 node --test "tests/*.test.js"
 ```
 
-74 pruebas cubren libertades, grupos, capturas, suicidio, ko, snapback,
-deshacer/rehacer, handicap, serialización y puntuación.
+84 pruebas cubren libertades, grupos, capturas, suicidio, ko, snapback,
+deshacer/rehacer, handicap, serialización, puntuación e IA de nivel 1.
 
 ---
 
@@ -191,7 +195,7 @@ la aplicación.
 - Importación de SGF y visor de partidas con reproducción.
 - Tutorial interactivo y problemas de Go.
 - Modo práctica avanzado.
-- CPU sencilla con varios niveles.
+- CPU nivel 2 con heurísticas (capturas, atari).
 
 **En estudio**
 - Motores de Go offline (WebAssembly). KataGo puede ser demasiado pesado para
